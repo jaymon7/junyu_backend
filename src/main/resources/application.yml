@@ -7,13 +7,7 @@ spring:
     driver-class-name: org.h2.Driver
     username: sa
     password:
-  sql:
-    init:
-      mode: always
-      data-locations: classpath:data.sql
-      continue-on-error: true
   jpa:
-    defer-datasource-initialization: true
     hibernate:
       ddl-auto: create-drop
     format_sql: true

@@ -1,1 +1,0 @@
-INSERT INTO account (id, account_number, balance) VALUES (1, '123-2415-1234', 100000);
