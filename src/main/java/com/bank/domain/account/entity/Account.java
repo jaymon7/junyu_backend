@@ -159,16 +159,12 @@ public class Account extends BaseEntity<AccountId> {
 
         this.balance = this.balance.add(amount);
         ReceiveTransaction transaction = ReceiveTransaction.recordReceiveTransaction(
-                senderAccountId,
                 getId(),
+                senderAccountId,
                 amount,
                 this.balance
         );
 
-        this.transactions.add(transaction);
-    }
-
-    public void addTransaction(AccountTransaction transaction) {
         this.transactions.add(transaction);
     }
 
