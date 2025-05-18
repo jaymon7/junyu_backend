@@ -16,5 +16,5 @@ public interface AccountRepository {
 
     void update(Account account);
 
-    Page<AccountTransactionRetrieveResponse.Transaction> findAllAccountTransaction(AccountId accountId, int page, int size);
+    Page<AccountTransactionRetrieveResponse.Transaction> findAllTransferTransactionOrReceiveTransaction(AccountId accountId, int page, int size);
 }

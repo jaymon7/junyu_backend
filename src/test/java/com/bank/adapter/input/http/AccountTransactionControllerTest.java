@@ -22,6 +22,7 @@ import java.math.BigDecimal;
 import java.time.ZonedDateTime;
 
 import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -354,8 +355,7 @@ class AccountTransactionControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                        post("/api/v1/accounts/" + accountNumber.value() + "/transactions")
-                                .contentType(MediaType.APPLICATION_JSON)
+                        get("/api/v1/accounts/" + accountNumber.value() + "/transactions")
                                 .param("page", String.valueOf(page))
                                 .param("size", String.valueOf(size)))
                 .andDo(print());
@@ -380,8 +380,7 @@ class AccountTransactionControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                        post("/api/v1/accounts/" + accountNumber.value() + "/transactions")
-                                .contentType(MediaType.APPLICATION_JSON)
+                        get("/api/v1/accounts/" + accountNumber.value() + "/transactions")
                                 .param("page", String.valueOf(page))
                                 .param("size", String.valueOf(size)))
                 .andDo(print());

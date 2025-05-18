@@ -79,7 +79,7 @@ public class PersistenceAccountRepositoryService implements AccountRepository {
     }
 
     @Override
-    public Page<AccountTransactionRetrieveResponse.Transaction> findAllAccountTransaction(AccountId accountId, int page, int size) {
+    public Page<AccountTransactionRetrieveResponse.Transaction> findAllTransferTransactionOrReceiveTransaction(AccountId accountId, int page, int size) {
         return transactionRepository
                 .findAllTransferOrReceiveTransactionByAccountId(accountId.getValue(), PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "transactionAt")))
                 .map(accountTransactionEntity -> {

@@ -105,7 +105,7 @@ public class BankService implements CreateAccountUseCase, DestroyAccountUseCase,
         }
 
         return new AccountTransactionRetrieveResponse(
-                accountRepository.findAllAccountTransaction(
+                accountRepository.findAllTransferTransactionOrReceiveTransaction(
                         account.getId(),
                         command.page(),
                         command.size()

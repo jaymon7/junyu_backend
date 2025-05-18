@@ -1,6 +1,5 @@
 package com.bank.adapter.output.persistence.entity;
 
-import com.bank.domain.account.entity.Account;
 import jakarta.persistence.*;
 import lombok.*;
 
