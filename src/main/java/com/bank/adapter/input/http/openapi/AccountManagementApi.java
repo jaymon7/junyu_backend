@@ -58,7 +58,7 @@ public interface AccountManagementApi {
             consumes = {MediaType.APPLICATION_JSON_VALUE}
     )
     ResponseEntity<?> deleteAccount(
-            @Parameter(description = "계좌번호")
+            @Parameter(description = "계좌번호", example = "134-1234-5678")
             @PathVariable String accountNumber
     );
 }

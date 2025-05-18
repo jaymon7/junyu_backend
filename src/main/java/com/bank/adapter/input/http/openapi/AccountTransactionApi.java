@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import static org.springframework.util.MimeTypeUtils.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 public interface AccountTransactionApi {
@@ -94,13 +95,11 @@ public interface AccountTransactionApi {
             tags = {"API V1"}
     )
     @RequestMapping(
-            method = POST,
-            value = "/api/v1/accounts/{accountNumber}/transactions",
-            produces = {APPLICATION_JSON_VALUE},
-            consumes = {APPLICATION_JSON_VALUE}
+            method = GET,
+            value = "/api/v1/accounts/{accountNumber}/transactions"
     )
     ResponseEntity<RetrieveAccountTransactionApiResponse> getAccountTransaction(
-            @Parameter(description = "계좌 거래 내역 조회 정보")
+            @Parameter(description = "계좌 거래 내역 조회 정보", example = "123-456-7890")
             @PathVariable(value = "accountNumber") String accountNumber,
             @Parameter(description = "페이지 번호") @RequestParam(defaultValue = "0") int page,
             @Parameter(description = "페이지 사이즈") @RequestParam(defaultValue = "20") int size
