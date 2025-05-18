@@ -210,19 +210,9 @@ class AccountTest {
     void 이체_성공() {
         // given
         Money balance = Money.of(BigDecimal.valueOf(2_000));
-        Account transferAccount = Account.builder()
-                .status(AccountStatus.ACTIVE)
-                .balance(Money.of(balance.amount()))
-                .transactions(
-                        List.of(
-                                TransferTransaction.builder()
-                                        .amount(Money.of(BigDecimal.valueOf(2_999_000)))
-                                        .transactionAt(ZonedDateTime.now().withHour(0).withMinute(0).withSecond(0))
-                                        .build()
-                        )
-                )
-                .build();
-        Account receiveAccount = Account.createAccount("홍길동");
+        Account transferAccount = Account.createAccount("홍길동");
+        transferAccount.deposit(balance);
+        Account receiveAccount = Account.createAccount("김철수");
 
         Money transferAmount = Money.of(BigDecimal.valueOf(1_000));
 
@@ -259,11 +249,9 @@ class AccountTest {
     @DisplayName("이체 실패(잔액 부족)")
     void 이체_실패2() {
         // given
-        Account transferAccount = Account.builder()
-                .status(AccountStatus.ACTIVE)
-                .balance(Money.of(BigDecimal.valueOf(1_000)))
-                .build();
-        Account receiveAccount = Account.createAccount("홍길동");
+        Account transferAccount = Account.createAccount("홍길동");
+        transferAccount.deposit(Money.of(BigDecimal.valueOf(1_000)));
+        Account receiveAccount = Account.createAccount("김철수");
         Money transferAmount = Money.of(BigDecimal.valueOf(2_000));
 
         // when
@@ -280,19 +268,10 @@ class AccountTest {
     @DisplayName("이체 실패(이체 한도 초과)")
     void 이체_실패3() {
         // given
-        Account transferAccount = Account.builder()
-                .status(AccountStatus.ACTIVE)
-                .balance(Money.of(BigDecimal.valueOf(2_000)))
-                .transactions(
-                        List.of(
-                                TransferTransaction.builder()
-                                        .amount(Money.of(BigDecimal.valueOf(3_000_000)))
-                                        .transactionAt(ZonedDateTime.now())
-                                        .build()
-                        )
-                )
-                .build();
-        Account receiveAccount = Account.createAccount("홍길동");
+        Account transferAccount = Account.createAccount("홍길동");
+        transferAccount.deposit(Money.of(BigDecimal.valueOf(4_000_000)));;
+        Account receiveAccount = Account.createAccount("김철수");
+        transferAccount.transfer(receiveAccount.getId(), Money.of(BigDecimal.valueOf(3_000_000)));
         Money transferAmount = Money.of(BigDecimal.valueOf(1_000));
 
         // when
@@ -309,19 +288,9 @@ class AccountTest {
     @DisplayName("이체 실패(수수료 초과)")
     void 이체_실패4() {
         // given
-        Account transferAccount = Account.builder()
-                .status(AccountStatus.ACTIVE)
-                .balance(Money.of(BigDecimal.valueOf(1_000)))
-                .transactions(
-                        List.of(
-                                TransferTransaction.builder()
-                                        .amount(Money.of(BigDecimal.valueOf(2_999_000)))
-                                        .transactionAt(ZonedDateTime.now())
-                                        .build()
-                        )
-                )
-                .build();
-        Account receiveAccount = Account.createAccount("홍길동");
+        Account transferAccount = Account.createAccount("홍길동");
+        transferAccount.deposit(Money.of(BigDecimal.valueOf(1_000)));
+        Account receiveAccount = Account.createAccount("김철수");
         Money transferAmount = Money.of(BigDecimal.valueOf(1_000));
 
         // when
