@@ -22,7 +22,11 @@ public class BankService implements CreateAccountUseCase, DestroyAccountUseCase,
         Account account = Account.createAccount(command.accountHolderName());
         accountRepository.create(account);
 
-        return new CreateAccountResponse(account);
+        return new CreateAccountResponse(
+                account.getAccountNumber(),
+                account.getAccountHolderName(),
+                account.getBalance()
+        );
     }
 
     @Override

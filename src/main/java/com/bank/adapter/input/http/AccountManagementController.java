@@ -30,10 +30,9 @@ public class AccountManagementController implements AccountManagementApi {
 
         return ResponseEntity.created(null).body(
                 new CreateAccountApiResponse(
-                        response.account().getId().getValue().toString(),
-                        response.account().getAccountHolderName(),
-                        response.account().getAccountNumber().value(),
-                        response.account().getBalance().amount().intValue()
+                        response.accountNumber().value(),
+                        response.accountHolderName(),
+                        response.balance().amount().intValue()
                 )
         );
     }
