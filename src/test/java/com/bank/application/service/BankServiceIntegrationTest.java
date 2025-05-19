@@ -49,12 +49,11 @@ class BankServiceIntegrationTest {
         CreateAccountResponse accountResponse = bankService.createAccount(accountCommand);
 
         // then
-        Optional<AccountEntity> findAccount = accountJpaRepository.findById(accountResponse.account().getId().getValue());
+        Optional<AccountEntity> findAccount = accountJpaRepository.findById(accountResponse.accountId().getValue());
 
         assertEquals(true, findAccount.isPresent(), "계좌가 정상적으로 생성되어야 합니다.");
-        assertEquals("홍길동", accountResponse.account().getAccountHolderName(), "계좌 소유자 이름이 일치해야 합니다.");
-        assertEquals(0, accountResponse.account().getBalance().amount().intValue(), "계좌 잔액이 0이어야 합니다.");
-        assertEquals(AccountStatus.ACTIVE, accountResponse.account().getStatus(), "계좌 상태가 ACTIVE여야 합니다.");
+        assertEquals("홍길동", accountResponse.accountHolderName(), "계좌 소유자 이름이 일치해야 합니다.");
+        assertEquals(0, accountResponse.balance().amount().intValue(), "계좌 잔액이 0이어야 합니다.");
     }
 
     @Test
@@ -166,7 +165,7 @@ class BankServiceIntegrationTest {
         for (int i = 0; i < executorCount; i++) {
             Money amount = Money.of(new BigDecimal(new Random().nextLong(1_000_000L)));
             totalAmount.updateAndGet(v -> v + amount.amount().longValue());
-            DepositMoneyCommand depositMoneyCommand = new DepositMoneyCommand(accountResponse.account().getAccountNumber(), amount);
+            DepositMoneyCommand depositMoneyCommand = new DepositMoneyCommand(accountResponse.accountNumber(), amount);
 
             futures[i] = CompletableFuture.supplyAsync(() -> bankService.deposit(depositMoneyCommand));
         }
@@ -175,7 +174,7 @@ class BankServiceIntegrationTest {
         CompletableFuture.allOf(futures).join();
 
         // then
-        Optional<AccountEntity> findAccount = accountJpaRepository.findById(accountResponse.account().getId().getValue());
+        Optional<AccountEntity> findAccount = accountJpaRepository.findById(accountResponse.accountId().getValue());
 
         assertEquals(true, findAccount.isPresent(), "계좌 정보가 존재해야 합니다.");
         assertEquals(totalAmount.get(), findAccount.get().getBalance().longValue(), "계좌 잔액이 정확해야 합니다.");
@@ -206,7 +205,7 @@ class BankServiceIntegrationTest {
         // given
         CreateAccountResponse accountResponse = bankService.createAccount(new CreateAccountCommand("홍길동"));
         Money depositAmount = Money.of(new BigDecimal(2_000_000L));
-        bankService.deposit(new DepositMoneyCommand(accountResponse.account().getAccountNumber(), depositAmount));
+        bankService.deposit(new DepositMoneyCommand(accountResponse.accountNumber(), depositAmount));
 
         int executorCount = 1000;
         CompletableFuture[] futures = new CompletableFuture[executorCount];
@@ -215,7 +214,7 @@ class BankServiceIntegrationTest {
         for (int i = 0; i < executorCount; i++) {
             Money withdrawAmount = Money.of(new BigDecimal(new Random().nextLong(1_000)));
             totalAmount.updateAndGet(v -> v + withdrawAmount.amount().longValue());
-            WithdrawMoneyCommand withdrawMoneyCommand = new WithdrawMoneyCommand(accountResponse.account().getAccountNumber(), withdrawAmount);
+            WithdrawMoneyCommand withdrawMoneyCommand = new WithdrawMoneyCommand(accountResponse.accountNumber(), withdrawAmount);
 
             futures[i] = CompletableFuture.supplyAsync(() -> bankService.withdraw(withdrawMoneyCommand));
         }
@@ -224,7 +223,7 @@ class BankServiceIntegrationTest {
         CompletableFuture.allOf(futures).join();
 
         // then
-        AccountEntity findAccount = accountJpaRepository.findById(accountResponse.account().getId().getValue())
+        AccountEntity findAccount = accountJpaRepository.findById(accountResponse.accountId().getValue())
                         .orElseThrow();
 
         assertEquals(depositAmount.amount().longValue() - totalAmount.get(), findAccount.getBalance().longValue(), "계좌 잔액이 정확해야 합니다.");
@@ -303,15 +302,15 @@ class BankServiceIntegrationTest {
         CreateAccountResponse senderAccountResponse = bankService.createAccount(new CreateAccountCommand("홍길동"));
         CreateAccountResponse receiverAccountResponse = bankService.createAccount(new CreateAccountCommand("김철수"));
         bankService.deposit(
-                new DepositMoneyCommand(senderAccountResponse.account().getAccountNumber(), Money.of(new BigDecimal(2_000_000L)))
+                new DepositMoneyCommand(senderAccountResponse.accountNumber(), Money.of(new BigDecimal(2_000_000L)))
         );
         bankService.transfer(
-                new TransferMoneyCommand(senderAccountResponse.account().getAccountNumber(), receiverAccountResponse.account().getAccountNumber(), Money.of(new BigDecimal(1_000_000L)))
+                new TransferMoneyCommand(senderAccountResponse.accountNumber(), receiverAccountResponse.accountNumber(), Money.of(new BigDecimal(1_000_000L)))
         );
 
         // when
         AccountTransactionRetrieveResponse retrieveResponse = bankService.retrieveAccountTransactions(
-                new AccountTransactionRetrieveCommand(senderAccountResponse.account().getAccountNumber(), 0, 10)
+                new AccountTransactionRetrieveCommand(senderAccountResponse.accountNumber(), 0, 10)
         );
 
         // then
