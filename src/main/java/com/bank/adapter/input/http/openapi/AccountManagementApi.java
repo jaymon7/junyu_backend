@@ -53,9 +53,7 @@ public interface AccountManagementApi {
     )
     @RequestMapping(
             method = DELETE,
-            value = "/api/v1/accounts/{accountNumber}",
-            produces = {MediaType.APPLICATION_JSON_VALUE},
-            consumes = {MediaType.APPLICATION_JSON_VALUE}
+            value = "/api/v1/accounts/{accountNumber}"
     )
     ResponseEntity<?> deleteAccount(
             @Parameter(description = "계좌번호", example = "134-1234-5678")

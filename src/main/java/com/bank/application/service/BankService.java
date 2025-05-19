@@ -23,6 +23,7 @@ public class BankService implements CreateAccountUseCase, DestroyAccountUseCase,
         accountRepository.create(account);
 
         return new CreateAccountResponse(
+                account.getId(),
                 account.getAccountNumber(),
                 account.getAccountHolderName(),
                 account.getBalance()

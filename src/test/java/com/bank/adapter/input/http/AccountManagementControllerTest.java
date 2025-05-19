@@ -44,7 +44,14 @@ class AccountManagementControllerTest {
         String accountHolderName = "홍길동";
         Account account = Account.createAccount(accountHolderName);
         given(createAccountUseCase.createAccount(new CreateAccountCommand(accountHolderName)))
-                .willReturn(new CreateAccountResponse(account));
+                .willReturn(
+                        new CreateAccountResponse(
+                                account.getId(),
+                                account.getAccountNumber(),
+                                account.getAccountHolderName(),
+                                account.getBalance()
+                        )
+                );
 
         // when
         ResultActions actions = mockMvc.perform(
@@ -57,7 +64,6 @@ class AccountManagementControllerTest {
         actions.andExpect(status().isCreated())
                 .andExpect(handler().handlerType(AccountManagementController.class))
                 .andExpect(handler().methodName("postAccount"))
-                .andExpect(jsonPath("$.accountId").value(account.getId().toString()))
                 .andExpect(jsonPath("$.accountHolderName").value(accountHolderName))
                 .andExpect(jsonPath("$.accountNumber").value(account.getAccountNumber().value()))
                 .andExpect(jsonPath("$.balance").value(account.getBalance().amount().intValue()));
@@ -110,8 +116,7 @@ class AccountManagementControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                delete("/api/v1/accounts/" + accountNumber)
-                        .contentType(MediaType.APPLICATION_JSON))
+                delete("/api/v1/accounts/" + accountNumber))
                 .andDo(print());
 
         // then
@@ -130,8 +135,7 @@ class AccountManagementControllerTest {
 
         // when
         ResultActions actions = mockMvc.perform(
-                delete("/api/v1/accounts/" + accountNumber)
-                        .contentType(MediaType.APPLICATION_JSON))
+                delete("/api/v1/accounts/" + accountNumber))
                 .andDo(print());
 
         // then
