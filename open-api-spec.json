@@ -63,81 +63,6 @@
         }
       }
     },
-    "/api/v1/accounts/{accountNumber}/transactions": {
-      "post": {
-        "tags": [
-          "API V1"
-        ],
-        "summary": "[API V1] 계좌 거래 내역 조회",
-        "description": "계좌의 거래 내역을 조회합니다.",
-        "operationId": "getAccountTransaction",
-        "parameters": [
-          {
-            "name": "accountNumber",
-            "in": "path",
-            "description": "계좌 거래 내역 조회 정보",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "page",
-            "in": "query",
-            "description": "페이지 번호",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 0
-            }
-          },
-          {
-            "name": "size",
-            "in": "query",
-            "description": "페이지 사이즈",
-            "required": false,
-            "schema": {
-              "type": "integer",
-              "format": "int32",
-              "default": 20
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "거래 내역 조회 성공",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveAccountTransactionApiResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "잘못된 요청입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveAccountTransactionApiResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "서버 오류입니다.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/RetrieveAccountTransactionApiResponse"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/v1/accounts/withdrawal": {
       "post": {
         "tags": [
@@ -294,6 +219,82 @@
         }
       }
     },
+    "/api/v1/accounts/{accountNumber}/transactions": {
+      "get": {
+        "tags": [
+          "API V1"
+        ],
+        "summary": "[API V1] 계좌 거래 내역 조회",
+        "description": "계좌의 거래 내역을 조회합니다.",
+        "operationId": "getAccountTransaction",
+        "parameters": [
+          {
+            "name": "accountNumber",
+            "in": "path",
+            "description": "계좌 거래 내역 조회 정보",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "example": "123-456-7890"
+          },
+          {
+            "name": "page",
+            "in": "query",
+            "description": "페이지 번호",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 0
+            }
+          },
+          {
+            "name": "size",
+            "in": "query",
+            "description": "페이지 사이즈",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "거래 내역 조회 성공",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveAccountTransactionApiResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "잘못된 요청입니다.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveAccountTransactionApiResponse"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "서버 오류입니다.",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/RetrieveAccountTransactionApiResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/accounts/{accountNumber}": {
       "delete": {
         "tags": [
@@ -310,7 +311,8 @@
             "required": true,
             "schema": {
               "type": "string"
-            }
+            },
+            "example": "134-1234-5678"
           }
         ],
         "responses": {
@@ -357,7 +359,9 @@
         "type": "object",
         "properties": {
           "accountHolderName": {
-            "type": "string"
+            "type": "string",
+            "description": "계좌 소유자 이름",
+            "example": "홍길동"
           }
         },
         "description": "계좌 생성 요청 정보"
@@ -365,20 +369,174 @@
       "CreateAccountApiResponse": {
         "type": "object",
         "properties": {
-          "accountId": {
-            "type": "string"
+          "accountNumber": {
+            "type": "string",
+            "description": "계좌번호",
+            "example": "123-456-7890"
           },
           "accountHolderName": {
-            "type": "string"
-          },
-          "accountNumber": {
-            "type": "string"
+            "type": "string",
+            "description": "계좌 소유자 이름",
+            "example": "홍길동"
           },
           "balance": {
             "type": "integer",
-            "format": "int32"
+            "description": "계좌 잔액",
+            "format": "int32",
+            "example": 10000
           }
         }
+      },
+      "DepositMoneyApiRequest": {
+        "required": [
+          "accountNumber",
+          "amount"
+        ],
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "계좌번호",
+            "example": "123-456-7890"
+          },
+          "amount": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "입금액",
+            "format": "int32",
+            "example": 10000
+          }
+        },
+        "description": "입금 정보"
+      },
+      "WithdrawalMoneyApiResponse": {
+        "title": "계좌 출금 응답",
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "계좌번호",
+            "example": "123-2415-1234"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "잔액",
+            "format": "int32",
+            "example": 100000
+          },
+          "amount": {
+            "type": "integer",
+            "description": "출금 금액",
+            "format": "int32",
+            "example": 1000
+          },
+          "withdrawalAt": {
+            "type": "string",
+            "description": "출금 일시",
+            "format": "date-time",
+            "example": "2023-10-01T10:00:00Z"
+          }
+        },
+        "description": "계좌 출금 응답 정보"
+      },
+      "TransferMoneyApiRequest": {
+        "required": [
+          "amount",
+          "receiverAccountNumber",
+          "senderAccountNumber"
+        ],
+        "type": "object",
+        "properties": {
+          "senderAccountNumber": {
+            "type": "string",
+            "description": "송금계좌번호",
+            "example": "123-456-7890"
+          },
+          "receiverAccountNumber": {
+            "type": "string",
+            "description": "수신계좌번호",
+            "example": "098-765-4321"
+          },
+          "amount": {
+            "minimum": 1,
+            "type": "integer",
+            "description": "송금액",
+            "format": "int32",
+            "example": 10000
+          }
+        },
+        "description": "계좌 이체 정보"
+      },
+      "TransferMoneyApiResponse": {
+        "title": "계좌 이체 응답",
+        "type": "object",
+        "properties": {
+          "senderAccountNumber": {
+            "type": "string",
+            "description": "송금 계좌번호",
+            "example": "123-2415-1234"
+          },
+          "receiverAccountNumber": {
+            "type": "string",
+            "description": "수신 계좌번호",
+            "example": "123-2415-1234"
+          },
+          "balance": {
+            "type": "integer",
+            "description": "잔액",
+            "format": "int32",
+            "example": 100000
+          },
+          "amount": {
+            "type": "integer",
+            "description": "송금 금액",
+            "format": "int32",
+            "example": 10000
+          },
+          "transferFee": {
+            "type": "integer",
+            "description": "송금 수수료",
+            "format": "int32",
+            "example": 1000
+          },
+          "transferAt": {
+            "type": "string",
+            "description": "송금 일시",
+            "format": "date-time",
+            "example": "2023-10-01T10:00:00Z"
+          }
+        },
+        "description": "계좌 이체 응답 정보"
+      },
+      "DepositMoneyApiResponse": {
+        "title": "계좌 입금 응답",
+        "type": "object",
+        "properties": {
+          "accountNumber": {
+            "type": "string",
+            "description": "계좌번호",
+            "example": "123-2415-1234"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "입금 금액",
+            "format": "int32",
+            "example": 10000
+          },
+          "balance": {
+            "type": "integer",
+            "description": "잔액",
+            "format": "int32",
+            "example": 100000
+          },
+          "depositAt": {
+            "type": "string",
+            "description": "입금 일시",
+            "format": "date-time",
+            "example": "2023-10-01T10:00:00Z"
+          }
+        },
+        "description": "계좌 입금 응답 정보"
       },
       "PaginationApiResponse": {
         "title": "페이지네이션 정보",
@@ -472,147 +630,6 @@
             "transactionAt": "2023-10-01T10:00:00Z"
           }
         ]
-      },
-      "DepositMoneyApiRequest": {
-        "required": [
-          "accountNumber",
-          "amount"
-        ],
-        "type": "object",
-        "properties": {
-          "accountNumber": {
-            "type": "string"
-          },
-          "amount": {
-            "minimum": 1,
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "description": "입금 정보"
-      },
-      "WithdrawalMoneyApiResponse": {
-        "title": "계좌 출금 응답",
-        "type": "object",
-        "properties": {
-          "accountNumber": {
-            "type": "string",
-            "description": "계좌번호",
-            "example": "123-2415-1234"
-          },
-          "balance": {
-            "type": "integer",
-            "description": "잔액",
-            "format": "int32",
-            "example": 100000
-          },
-          "amount": {
-            "type": "integer",
-            "description": "출금 금액",
-            "format": "int32",
-            "example": 1000
-          },
-          "withdrawalAt": {
-            "type": "string",
-            "description": "출금 일시",
-            "format": "date-time",
-            "example": "2023-10-01T10:00:00Z"
-          }
-        },
-        "description": "계좌 출금 응답 정보"
-      },
-      "TransferMoneyApiRequest": {
-        "required": [
-          "amount",
-          "receiverAccountNumber",
-          "senderAccountNumber"
-        ],
-        "type": "object",
-        "properties": {
-          "senderAccountNumber": {
-            "type": "string"
-          },
-          "receiverAccountNumber": {
-            "type": "string"
-          },
-          "amount": {
-            "minimum": 1,
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "description": "계좌 이체 정보"
-      },
-      "TransferMoneyApiResponse": {
-        "title": "계좌 이체 응답",
-        "type": "object",
-        "properties": {
-          "senderAccountNumber": {
-            "type": "string",
-            "description": "송금 계좌번호",
-            "example": "123-2415-1234"
-          },
-          "receiverAccountNumber": {
-            "type": "string",
-            "description": "수신 계좌번호",
-            "example": "123-2415-1234"
-          },
-          "balance": {
-            "type": "integer",
-            "description": "잔액",
-            "format": "int32",
-            "example": 100000
-          },
-          "amount": {
-            "type": "integer",
-            "description": "송금 금액",
-            "format": "int32",
-            "example": 10000
-          },
-          "transferFee": {
-            "type": "integer",
-            "description": "송금 수수료",
-            "format": "int32",
-            "example": 1000
-          },
-          "transferAt": {
-            "type": "string",
-            "description": "송금 일시",
-            "format": "date-time",
-            "example": "2023-10-01T10:00:00Z"
-          }
-        },
-        "description": "계좌 이체 응답 정보"
-      },
-      "DepositMoneyApiResponse": {
-        "title": "계좌 입금 응답",
-        "type": "object",
-        "properties": {
-          "accountNumber": {
-            "type": "string",
-            "description": "계좌번호",
-            "example": "123-2415-1234"
-          },
-          "amount": {
-            "type": "integer",
-            "description": "입금 금액",
-            "format": "int32",
-            "example": 10000
-          },
-          "balance": {
-            "type": "integer",
-            "description": "잔액",
-            "format": "int32",
-            "example": 100000
-          },
-          "depositAt": {
-            "type": "string",
-            "description": "입금 일시",
-            "format": "date-time",
-            "example": "2023-10-01T10:00:00Z"
-          }
-        },
-        "description": "계좌 입금 응답 정보"
       }
     }
   }
